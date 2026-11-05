@@ -13,13 +13,25 @@ const urlsLimpas = (server) => {
   });
 };
 
+// O Cloudflare Pages serve o 404.html em qualquer caminho (ex.: /a/b/c). Com base './' os links dele
+// quebrariam fora da raiz; só nessa página os caminhos viram absolutos (/assets/..., /termos).
+const raizNo404 = {
+  name: 'raiz-no-404',
+  transformIndexHtml: {
+    order: 'post',
+    handler(html, ctx) {
+      return ctx.path === '/404.html' ? html.replace(/(src|href)="\.\//g, '$1="/') : html;
+    },
+  },
+};
+
 // caminhos relativos: o site funciona no domínio próprio, no GitHub Pages ou numa pasta qualquer
 export default defineConfig({
   base: './',
-  plugins: [{ name: 'urls-limpas', configureServer: urlsLimpas, configurePreviewServer: urlsLimpas }],
+  plugins: [{ name: 'urls-limpas', configureServer: urlsLimpas, configurePreviewServer: urlsLimpas }, raizNo404],
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 900,
-    rollupOptions: { input: { index: aqui('index.html'), termos: aqui('termos.html'), privacidade: aqui('privacidade.html') } },
+    rollupOptions: { input: { index: aqui('index.html'), termos: aqui('termos.html'), privacidade: aqui('privacidade.html'), '404': aqui('404.html') } },
   },
 });

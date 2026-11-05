@@ -7,7 +7,7 @@ import pacote from '../package.json';
 
 // Data da última mudança dos Termos e da Privacidade. Troque na hora de publicar:
 // `npm run verificar-publicacao` recusa a publicação enquanto estiver 'AAAA-MM-DD'.
-export const ATUALIZADO = 'AAAA-MM-DD';
+export const ATUALIZADO = '2026-11-05';
 
 let idioma = idiomaInicial();
 const $ = (s) => document.querySelector(s);
