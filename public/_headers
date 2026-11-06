@@ -1,4 +1,36 @@
+# Cabeçalhos do Cloudflare Pages (regras: máx. 100, máx. 2000 caracteres por linha).
+# NÃO ponha aqui Strict-Transport-Security (HSTS): ele é aplicado na Cloudflare (painel SSL/TLS),
+# e repetir aqui duplicaria o cabeçalho. Também não repetir nosniff por outro caminho.
+# Sem COEP e sem CORP de propósito (risco de quebrar recurso). Sem X-XSS-Protection, Expect-CT e HPKP (obsoletos).
+# Teste local com os cabeçalhos de verdade: npm run build && npx wrangler pages dev dist
+# (o `vite preview` NÃO aplica este arquivo).
+#
+# Bloco /*:
+# CSP imposta. Tudo é do próprio site, exceto a consulta ao GitHub (botão de baixar).
+# img-src data: = QR do Pix gerado no navegador. Sem blob: (a cena 3D não usa blob URL; testado).
+# Sem 'unsafe-inline' e sem 'unsafe-eval': o site não tem script nem style inline.
+# Permissions-Policy: nega o que o site não usa, com lista vazia (sintaxe da MDN).
+# interest-cohort fica de fora: a MDN não lista mais essa diretiva (FLoC acabou).
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  Permissions-Policy: accelerometer=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), magnetometer=(), microphone=(), midi=(), payment=(), serial=(), usb=(), xr-spatial-tracking=()
+
+# Arquivos com hash no nome (saída do Vite): cache de 1 ano.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# security.txt: sem cache longo (a data Expires muda todo ano). O Content-Type text/plain; charset=utf-8
+# o Pages já entrega para .txt (conferido em covil.app/robots.txt), então não é repetido aqui.
+/.well-known/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Não indexar o espelho do Pages (covil-site.pages.dev e os endereços de cada deploy).
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

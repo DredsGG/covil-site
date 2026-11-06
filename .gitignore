@@ -4,3 +4,4 @@ dist
 *.log
 ferramentas/prints.mjs
 ferramentas/avatar-*.png
+.wrangler

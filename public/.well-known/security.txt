@@ -1,0 +1,7 @@
+# security.txt (RFC 9116). RENOVAR ANTES DE 2027-10-31: o campo Expires precisa estar no futuro
+# (menos de 1 ano) e trocado a cada renovação.
+Contact: mailto:contato@covil.app
+Expires: 2027-10-31T23:59:59Z
+Preferred-Languages: pt, en, es
+Canonical: https://covil.app/.well-known/security.txt
+Policy: https://covil.app/seguranca

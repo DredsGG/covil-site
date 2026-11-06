@@ -1,4 +1,5 @@
 // Textos do site em português, inglês e espanhol (regra 13). Qualquer outro idioma do navegador cai em inglês.
+
 export const TEXTOS = {
   pt: {
     'meta.titulo': 'Covil: chat, call e tela ao vivo para a sua turma',
@@ -67,6 +68,9 @@ export const TEXTOS = {
     'apoio.sponsors': 'Abrir GitHub Sponsors',
     'apoio.nota': 'Opcional. O Covil continua igual para todo mundo, apoiando ou não.',
     'semWebgl': 'Seu navegador não mostrou a caverna em 3D, mas o resto do site funciona normal.',
+    'rodape.cookies': 'Cookies',
+    'rodape.diretrizes': 'Diretrizes',
+    'rodape.seguranca': 'Segurança',
   },
   en: {
     'meta.titulo': 'Covil: chat, voice and live screens for your crew',
@@ -135,6 +139,9 @@ export const TEXTOS = {
     'apoio.sponsors': 'Open GitHub Sponsors',
     'apoio.nota': 'Optional. Covil stays the same for everyone, supporter or not.',
     'semWebgl': 'Your browser didn’t show the 3D cave, but the rest of the site works normally.',
+    'rodape.cookies': 'Cookies',
+    'rodape.diretrizes': 'Guidelines',
+    'rodape.seguranca': 'Security',
   },
   es: {
     'meta.titulo': 'Covil: chat, llamadas y pantallas en vivo para tu grupo',
@@ -203,8 +210,14 @@ export const TEXTOS = {
     'apoio.sponsors': 'Abrir GitHub Sponsors',
     'apoio.nota': 'Opcional. Covil sigue igual para todos, apoyes o no.',
     'semWebgl': 'Tu navegador no mostró la cueva en 3D, pero el resto del sitio funciona normal.',
+    'rodape.cookies': 'Cookies',
+    'rodape.diretrizes': 'Normas',
+    'rodape.seguranca': 'Seguridad',
   },
 };
+
+// Textos extras que só algumas páginas carregam (ex.: src/i18n-paginas.js). Entram em TEXTOS antes do primeiro t().
+export function registrar(extra) { for (const l of Object.keys(extra)) Object.assign(TEXTOS[l], extra[l]); }
 
 const CHAVE = 'covil_site_idioma';
 export function idiomaInicial() {

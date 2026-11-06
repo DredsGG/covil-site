@@ -143,6 +143,9 @@ main { position: relative; z-index: 2; }
 .doc-corpo h2::before { content: counter(secao) '. '; color: var(--brasa); }
 .doc-corpo p { margin-top: 10px; color: #d7cfc5; font-size: 18px; line-height: 1.65; }
 .doc-corpo a, .doc-fim a { color: var(--osso); text-underline-offset: 4px; }
+.doc-corpo ul { margin-top: 10px; padding-left: 1.3em; color: #d7cfc5; font-size: 18px; line-height: 1.65; }
+.doc-corpo li + li { margin-top: 6px; }
+.doc-corpo li::marker { color: var(--brasa); }
 .pagina-404 { display: flex; flex-direction: column; min-height: 100vh; }
 .pagina-404 .doc { flex: 1; }
 .doc-404 p { margin-top: 14px; color: #d7cfc5; font-size: 18px; line-height: 1.65; }
