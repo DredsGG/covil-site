@@ -166,7 +166,7 @@ Duas famílias, sem exceção: Bricolage Grotesque (títulos) e Atkinson Hyperle
 
 | Token | Fórmula | 390 | 1440 | 2560 | Uso |
 |---|---|---|---|---|---|
-| `--t-marca` | `clamp(8.5rem, 1rem + 14vw, 14rem)` | 136 | 218 | 308 | a palavra Covil |
+| `--t-marca` | `clamp(min(8.5rem, max(136px, 35vw)), 1rem + 14vw, 14rem)` | 136 | 218 | 308 | a palavra Covil (o `min(...)` mantém a palavra dentro da tela com o texto do navegador a 200%; sem zoom de texto fica 136 em qualquer celular) |
 | `--t-final` | `clamp(3.5rem, 1rem + 7vw, 8rem)` | 56 | 117 | 176 | chamada final |
 | `--t-batida` | `clamp(2.625rem, 1.1rem + 3.9vw, 5rem)` | 42 | 74 | 110 | título de batida |
 | `--t-titulo` | `clamp(2.25rem, 1rem + 3vw, 4rem)` | 36 | 59 | 88 | título de seção |
@@ -216,6 +216,12 @@ Nenhum raio fora da escala.
 ## Components
 
 Movimento: `--m-rapido` 120 ms (cor, clique), `--m-medio` 240 ms (faixa do topo, brilho), `--m-lento` 600 ms (entrada do texto, cena), `--m-pulso` 1,2 s (ícone procurando versão), `--m-respirar` 2,4 s (dica de rolar). Easing `--saida`, `cubic-bezier(0.22, 1, 0.36, 1)`. O texto entra só com deslocamento, nunca com opacidade: não existe estado apagado.
+
+Nada pisca mais de 3 vezes por segundo: o tremor da luz da fogueira tem no máximo cerca de 2,3 Hz (componente rápido em `sin(tempo * 14)`, e o produto de dois senos chega a 2,3 Hz), e as brasas piscam em até cerca de 2,2 Hz (`6 + 8` rad/s). A cena é um pedaço de JavaScript à parte, carregado com `import()`: o texto que já vem no HTML pinta antes dela.
+
+Sem WebGL, ou com o contexto WebGL perdido, vale `body.sem-3d`: a cena some e fica o fundo estático (`--noite` com a luz da fogueira), com o texto inteiro legível e nenhuma mensagem de erro no console.
+
+Reflow: o topo quebra em duas linhas (marca em cima, navegação embaixo) quando o texto a 200% não cabe numa linha. Zoom de 200% (720 px) e 400% (320 px) e texto a 200% não geram rolagem horizontal em nenhuma página.
 
 Com `prefers-reduced-motion: reduce`, a cena para de desenhar em laço e todas as animações e transições do CSS são desligadas. A câmera continua acompanhando a rolagem, um quadro por evento, sem suavização: anda só quando a pessoa rola.
 

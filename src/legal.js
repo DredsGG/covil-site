@@ -2,6 +2,7 @@ import '@fontsource-variable/bricolage-grotesque/standard.css';
 import '@fontsource/atkinson-hyperlegible-next/400.css';
 import '@fontsource/atkinson-hyperlegible-next/700.css';
 import './estilo.css';
+import './topo.js';
 import { idiomaInicial, registrar, salvarIdioma, t as tr } from './i18n.js';
 import { PAGINAS } from './i18n-paginas.js';
 import { paraNos } from './marcacao.js';

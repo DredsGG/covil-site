@@ -503,7 +503,7 @@ export function criarCena(canvas, { reduzido = false, leve = false, imagemTela =
     camera.lookAt(atualOlha);
 
     // fogo tremendo
-    const tremor = 0.82 + 0.12 * Math.sin(tempo * 9.1) * Math.sin(tempo * 5.3 + 1) + 0.08 * Math.sin(tempo * 23.7);
+    const tremor = 0.82 + 0.12 * Math.sin(tempo * 9.1) * Math.sin(tempo * 5.3 + 1) + 0.08 * Math.sin(tempo * 14);
     fogo.intensity = 90 * tremor;
     fogo.position.x = FOGO.x + Math.sin(tempo * 3.1) * 0.06;
     brilhoBoca.intensity = 14 * (0.9 + 0.1 * tremor);

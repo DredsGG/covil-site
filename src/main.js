@@ -2,6 +2,7 @@ import '@fontsource-variable/bricolage-grotesque/standard.css';
 import '@fontsource/atkinson-hyperlegible-next/400.css';
 import '@fontsource/atkinson-hyperlegible-next/700.css';
 import './estilo.css';
+import './topo.js';
 import qrcode from 'qrcode-generator';
 import { TEXTOS, idiomaInicial, salvarIdioma, t as tr } from './i18n.js';
 import { APOIO, brCode, valorPix } from './pix.js';
@@ -176,18 +177,24 @@ const olharCtas = new IntersectionObserver((itens) => {
 });
 olharCtas.observe($('.heroi .js-baixar')); olharCtas.observe($('.final .js-baixar'));
 
+function semCaverna() {
+  document.body.classList.add('sem-3d');
+  atualizarBug();
+}
 async function ligarCena() {
   const { criarCena, suportaWebGL } = await import('./cena.js');
   if (!suportaWebGL()) throw new Error('sem WebGL');
-  cena = criarCena($('#cena'), { reduzido, leve: estreito || (navigator.hardwareConcurrency || 8) <= 4, imagemTela: './img/call.webp' });
+  const canvas = $('#cena');
+  // contexto perdido (placa de vídeo reiniciou, aba em segundo plano muito tempo): vira o fundo estático em vez de um quadro preto
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); cena?.desligar(); semCaverna(); });
+  canvas.addEventListener('webglcontextrestored', () => { document.body.classList.remove('sem-3d'); atualizarBug(); aoRolar(); });
+  cena = criarCena(canvas, { reduzido, leve: estreito || (navigator.hardwareConcurrency || 8) <= 4, imagemTela: './img/call.webp' });
   window.__covilSite = cena;
   aoRolar();
 }
-ligarCena().catch((e) => {
-  console.warn('Covil: sem a caverna em 3D', e);
-  document.body.classList.add('sem-3d');
-  atualizarBug();
-});
+// o import() da cena já é assíncrono: o texto do HTML pinta antes. Medido (Lighthouse mobile, 4 rodadas), adiar a montagem para depois do
+// primeiro quadro e montar em fatias piorou o Speed Index (+15%) e não reduziu o tempo bloqueado, então a montagem é direta.
+ligarCena().catch((e) => { if (e?.message === 'sem WebGL') console.info('Covil: sem a caverna em 3D (sem WebGL)'); else console.error('Covil: a caverna em 3D falhou', e); semCaverna(); }); // sem WebGL não é erro: fundo estático, só uma linha informativa
 addEventListener('scroll', aoRolar, { passive: true });
 addEventListener('resize', aoRolar);
 document.addEventListener('visibilitychange', aoRolar);

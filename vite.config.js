@@ -45,6 +45,9 @@ const portuguesNoHtml = {
   },
 };
 
+// Fontes SEM preload, de propósito: medido com CPU 4x/6x e 4G lento (5 rodadas), o preload das 3 fontes latinas atrasou o primeiro texto
+// em 100 a 280 ms (as fontes disputam banda com o CSS e o JS) e não mudou o CLS, que já é 0 com font-display: swap.
+
 // caminhos relativos: o site funciona no domínio próprio, no GitHub Pages ou numa pasta qualquer
 export default defineConfig({
   base: './',

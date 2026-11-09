@@ -2,6 +2,7 @@ import '@fontsource-variable/bricolage-grotesque/standard.css';
 import '@fontsource/atkinson-hyperlegible-next/400.css';
 import '@fontsource/atkinson-hyperlegible-next/700.css';
 import './estilo.css';
+import './topo.js';
 import { idiomaInicial, salvarIdioma, t as tr } from './i18n.js';
 import pacote from '../package.json';
 

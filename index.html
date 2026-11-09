@@ -7,13 +7,41 @@
   <meta name="description" content="O Covil é o lugar da sua turma: chat, call de voz com supressão de ruído, câmera e até 4 telas ao vivo, num servidor que é de vocês." />
   <meta name="theme-color" content="#060508" />
   <link rel="icon" href="./icone.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Covil" />
+  <meta property="og:locale" content="pt_BR" />
   <meta property="og:title" content="Covil" />
   <meta property="og:description" content="Chat, call e tela ao vivo para a sua turma. Num servidor que é de vocês." />
   <link rel="canonical" href="https://covil.app/" />
   <meta property="og:url" content="https://covil.app/" />
   <meta property="og:image" content="https://covil.app/og.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Página inicial do Covil: a palavra Covil e uma fogueira ao fundo de uma caverna." />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Covil" />
+  <meta name="twitter:description" content="Chat, call e tela ao vivo para a sua turma. Num servidor que é de vocês." />
+  <meta name="twitter:image" content="https://covil.app/og.png" />
+  <meta name="twitter:image:alt" content="Página inicial do Covil: a palavra Covil e uma fogueira ao fundo de uma caverna." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Covil",
+    "description": "Chat, call de voz e tela ao vivo para grupos de amigos, num servidor que é do próprio grupo.",
+    "applicationCategory": "CommunicationApplication",
+    "operatingSystem": "Windows",
+    "url": "https://covil.app/",
+    "downloadUrl": "https://github.com/DredsGG/covil/releases/latest",
+    "inLanguage": [
+      "pt-BR",
+      "en",
+      "es"
+    ]
+  }
+  </script>
 </head>
 <body class="cta-a-vista">
   <a class="pular" href="#conteudo" data-t="nav.pular">Pular para o conteúdo</a>
@@ -24,7 +52,7 @@
     <a class="marca" href="#" aria-label="Covil">
       <img src="./icone.svg" alt="" width="32" height="32" /><span>Covil</span>
     </a>
-    <nav class="nav">
+    <nav class="nav" data-t-label="nav.rotulo" aria-label="Principal">
       <a href="#conta" data-t="nav.convite">Como entrar</a>
       <a class="botao principal nav-baixar js-baixar" href="https://github.com/DredsGG/covil/releases/latest" data-t="heroi.baixar">Baixar para Windows</a>
     </nav>
@@ -122,7 +150,7 @@
   </main>
 
   <footer class="rodape">
-    <div class="rodape-links">
+    <nav class="rodape-links" data-t-label="rodape.rotulo" aria-label="Rodapé">
       <a href="./termos" data-t="rodape.termos">Termos</a>
       <a href="./privacidade" data-t="rodape.privacidade">Privacidade</a>
       <a href="./cookies" data-t="rodape.cookies">Cookies</a>
@@ -132,7 +160,7 @@
       <a class="js-bug" href="https://github.com/DredsGG/covil/issues/new" target="_blank" rel="noopener" data-t="rodape.bug">Relatar bug</a>
       <a href="https://github.com/DredsGG/covil" target="_blank" rel="noopener" data-t="rodape.codigo">Código no GitHub</a>
       <button type="button" class="js-apoiar"><span data-t="rodape.apoiar">Apoiar</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14 2.2 8.1a3.4 3.4 0 0 1 4.8-4.8l1 1 1-1a3.4 3.4 0 0 1 4.8 4.8z"/></svg></button>
-    </div>
+    </nav>
     <div class="idiomas" role="group" data-t-label="rodape.idioma" aria-label="Idioma">
       <button type="button" data-idioma="pt" lang="pt">PT</button>
       <button type="button" data-idioma="en" lang="en">EN</button>

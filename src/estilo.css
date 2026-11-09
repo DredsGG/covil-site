@@ -21,7 +21,7 @@
   /* tipo */
   --display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
   --texto: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif;
-  --t-marca: clamp(8.5rem, 1rem + 14vw, 14rem);
+  --t-marca: clamp(min(8.5rem, max(136px, 35vw)), 1rem + 14vw, 14rem); /* o min(...) segura a palavra na tela com o texto do navegador a 200%; sem zoom de texto vale 136 px em qualquer celular (136px é literal de propósito: rem cresceria com o zoom) */
   --t-final: clamp(3.5rem, 1rem + 7vw, 8rem);
   --t-batida: clamp(2.625rem, 1.1rem + 3.9vw, 5rem);
   --t-titulo: clamp(2.25rem, 1rem + 3vw, 4rem);
@@ -72,7 +72,7 @@
 
 * { box-sizing: border-box; }
 /* 16 px até 1600 de largura; cresce até 24 px em telas enormes, então a grade inteira acompanha */
-html { font-size: clamp(100%, 0.625vw + 0.375rem, 150%); scroll-behavior: smooth; scroll-padding-top: calc(var(--altura-topo) + var(--e-6)); -webkit-text-size-adjust: 100%; }
+html { font-size: clamp(100%, 0.625vw + 0.375rem, 150%); scroll-behavior: smooth; scroll-padding-top: calc(var(--topo-real, var(--altura-topo)) + var(--e-6)); -webkit-text-size-adjust: 100%; }
 html:has(dialog[open]) { overflow: hidden; }
 body { margin: 0; background: var(--noite); color: var(--osso); font: 400 var(--t-corpo)/1.55 var(--texto); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 h1, h2, h3 { font-family: var(--display); margin: 0; font-weight: 700; }
@@ -99,17 +99,18 @@ body.sem-3d #cena { display: none; }
 body.sem-3d .veu { background: radial-gradient(60% 50% at 72% 62%, rgb(var(--brasa-rgb) / 0.22), rgb(var(--noite-rgb) / 0) 70%), var(--noite); }
 body.fora-da-caverna #cena, body.fora-da-caverna .veu { opacity: 0; }
 
-.topo { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--e-4); min-height: var(--altura-topo); padding: 0 var(--margem); }
+/* com texto a 200% o topo quebra em duas linhas em vez de estourar a largura (reflow, WCAG 1.4.10) */
+.topo { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--e-4); min-height: var(--altura-topo); padding: 0 var(--margem); }
 /* faixa opaca de borda seca: o texto que sobe some inteiro, sem passar por um estado apagado */
 .topo::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: var(--noite); border-bottom: 1px solid var(--linha); opacity: 0; transition: opacity var(--m-medio) var(--saida); }
 .topo.com-fundo::before, .pagina-legal .topo::before { opacity: 1; }
 .marca { display: inline-flex; align-items: center; gap: var(--e-3); min-height: var(--alvo); text-decoration: none; font: 700 var(--t-sec)/1 var(--display); letter-spacing: -0.01em; }
 .marca img { border-radius: var(--r-2); width: 2.25rem; height: 2.25rem; }
-.nav { display: flex; align-items: center; gap: var(--e-6); font-size: var(--t-nota); }
+.nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0 var(--e-6); min-width: 0; font-size: var(--t-nota); }
 .nav a:not(.botao) { display: inline-flex; align-items: center; min-height: var(--alvo); text-decoration: none; color: var(--osso-2); }
 .nav a:not(.botao):hover { color: var(--brasa-luz); }
 .nav a:not(.botao):active { color: var(--brasa); }
-.nav .nav-baixar { min-height: var(--alvo); padding: 0 var(--e-4); font-size: var(--t-nota); }
+.nav .nav-baixar { min-height: var(--alvo); padding: var(--e-1) var(--e-4); font-size: var(--t-nota); line-height: 1.15; text-align: center; }
 /* um destaque por tela: enquanto o botão do herói está à vista, o do topo fica guardado */
 .cta-a-vista .nav-baixar { display: none; }
 
@@ -163,7 +164,7 @@ main { position: relative; z-index: 2; }
 .privado h2 { max-width: 18ch; }
 .privado p { font-size: var(--t-sub); line-height: 1.5; color: var(--osso-2); max-width: 56ch; margin-top: var(--e-6); }
 
-.conta { align-items: start; scroll-margin-top: var(--altura-topo); }
+.conta { align-items: start; scroll-margin-top: var(--topo-real, var(--altura-topo)); }
 .conta .nota { margin-top: var(--e-4); color: var(--osso-2); max-width: 40ch; }
 .passos { list-style: none; margin: 0; padding: 0; counter-reset: passo; border-top: 1px solid var(--linha); }
 .passos li { counter-increment: passo; display: grid; grid-template-columns: 3rem 1fr; align-items: baseline; padding: var(--e-6) 0; border-bottom: 1px solid var(--linha); font-size: var(--t-sub); line-height: 1.4; }
