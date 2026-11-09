@@ -54,16 +54,17 @@ async function buscarRelease() {
 }
 function atualizarBaixar() {
   const fallback = `https://github.com/${REPO}/releases/latest`;
-  for (const a of $$('.js-baixar')) a.href = release?.url || fallback;
+  const procurando = !release && !releaseErro;
+  for (const a of $$('.js-baixar')) {
+    a.href = (eWindows && release?.url) || fallback; // fora do Windows nunca entrega o .exe direto
+    if (procurando) { a.dataset.estado = 'carregando'; a.setAttribute('aria-busy', 'true'); } else { delete a.dataset.estado; a.removeAttribute('aria-busy'); }
+  }
   for (const p of $$('.js-baixar-info')) {
     if (release?.url) p.textContent = t('baixar.versao', { v: release.versao, mb: Math.round(release.tamanho / 1048576) });
-    else if (releaseErro) { p.innerHTML = ''; const a = document.createElement('a'); a.href = release?.pagina || fallback; a.textContent = t('baixar.semInfo'); p.append(a); }
+    else if (releaseErro || release) { p.innerHTML = ''; const a = document.createElement('a'); a.href = release?.pagina || fallback; a.textContent = t('baixar.semInfo'); p.append(a); }
     else p.textContent = t('baixar.carregando');
   }
-  const outro = $('.js-outro-sistema');
-  if (!eWindows) {
-    outro.hidden = false; outro.textContent = t('baixar.outroSistema');
-  }
+  if (!eWindows) for (const outro of $$('.js-outro-sistema, .js-outro-heroi')) { outro.hidden = false; outro.textContent = t('baixar.outroSistema'); }
 }
 buscarRelease().then((r) => { release = r; atualizarBaixar(); }).catch(() => { releaseErro = true; atualizarBaixar(); });
 
@@ -88,36 +89,60 @@ function el(tag, attrs = {}, ...filhos) {
   return n;
 }
 function desenharApoio() {
-  const topo = el('div', { class: 'apoio-topo' }, el('h2', { id: 'apoio-titulo' }, t('apoio.titulo')), el('button', { type: 'button', class: 'apoio-x', 'aria-label': t('apoio.fechar'), on: { click: () => dlg.close() } }, '×'));
+  // redesenhar não pode jogar o foco para fora: guarda o controle atual e volta para ele (ou para o primeiro do passo novo)
+  const focoAntes = dlg.contains(document.activeElement) ? document.activeElement.dataset.foco : null;
+  const topo = el('div', { class: 'apoio-topo' }, el('h2', { id: 'apoio-titulo' }, t('apoio.titulo')), el('button', { type: 'button', class: 'apoio-x', 'aria-label': t('apoio.fechar'), 'data-foco': 'fechar', on: { click: () => dlg.close() } }, '×'));
   const corpo = el('div', { class: 'apoio-dentro' }, topo);
+  const irPara = (passo) => () => { passoApoio = passo; desenharApoio(); dlg.querySelector('.apoio-opcoes button, .apoio-valores button, .apoio a.botao')?.focus(); };
   if (!passoApoio) {
     corpo.append(el('p', {}, t('apoio.pergunta')));
     const prov = idioma === 'pt' ? 'br' : 'fora';
     corpo.append(el('div', { class: 'apoio-opcoes' },
-      el('button', { type: 'button', class: 'apoio-cartao' + (prov === 'br' ? ' provavel' : ''), on: { click: () => { passoApoio = 'br'; desenharApoio(); } } }, el('b', {}, '🇧🇷 ' + t('apoio.brasil')), el('small', {}, t('apoio.brasilSub'))),
-      el('button', { type: 'button', class: 'apoio-cartao' + (prov === 'fora' ? ' provavel' : ''), on: { click: () => { passoApoio = 'fora'; desenharApoio(); } } }, el('b', {}, '🌎 ' + t('apoio.fora')), el('small', {}, t('apoio.foraSub')))));
+      el('button', { type: 'button', class: 'apoio-cartao' + (prov === 'br' ? ' provavel' : ''), 'data-foco': 'br', on: { click: irPara('br') } }, el('b', {}, t('apoio.brasil')), el('small', {}, t('apoio.brasilSub'))),
+      el('button', { type: 'button', class: 'apoio-cartao' + (prov === 'fora' ? ' provavel' : ''), 'data-foco': 'fora', on: { click: irPara('fora') } }, el('b', {}, t('apoio.fora')), el('small', {}, t('apoio.foraSub')))));
   } else if (passoApoio === 'br') {
-    const valores = el('div', { class: 'apoio-valores', role: 'group' });
-    for (const v of ['5', '10', '25']) valores.append(el('button', { type: 'button', 'aria-pressed': String(valorApoio === v), on: { click: () => { valorApoio = v; desenharApoio(); } } }, `R$ ${v}`));
-    valores.append(el('button', { type: 'button', 'aria-pressed': String(!['5', '10', '25'].includes(valorApoio)), on: { click: () => { valorApoio = ''; desenharApoio(); } } }, t('apoio.outro')));
+    const fixos = ['5', '10', '25'];
+    const valores = el('div', { class: 'apoio-valores', role: 'group', 'aria-label': t('apoio.valores') });
+    for (const v of fixos) valores.append(el('button', { type: 'button', 'aria-pressed': String(valorApoio === v), 'data-foco': 'v' + v, on: { click: () => { valorApoio = v; desenharApoio(); } } }, `R$ ${v}`));
+    valores.append(el('button', { type: 'button', 'aria-pressed': String(!fixos.includes(valorApoio)), 'data-foco': 'outro', on: { click: () => { valorApoio = ''; desenharApoio(); } } }, t('apoio.outro')));
     corpo.append(valores);
-    if (!['5', '10', '25'].includes(valorApoio)) {
-      corpo.append(el('input', { inputmode: 'decimal', placeholder: t('apoio.valorPh'), value: valorApoio, 'aria-label': t('apoio.outro'), on: { change: (e) => { valorApoio = e.target.value; desenharApoio(); } } }));
+    let codigo = '';
+    const qr = el('img', { class: 'apoio-qr', alt: t('apoio.qrAlt'), width: 210, height: 210 });
+    const notaValor = el('p', { class: 'apoio-nota', hidden: true });
+    // digitar o valor só troca o QR e o código: o quadro não é redesenhado, então o clique em Copiar nunca se perde
+    const atualizarPix = () => {
+      const v = valorPix(valorApoio);
+      codigo = brCode(v === v ? valorApoio : '');
+      const q = qrcode(0, 'M'); q.addData(codigo); q.make();
+      qr.src = q.createDataURL(6, 4);
+      notaValor.hidden = v !== null && v === v;
+      notaValor.textContent = v !== v ? t('apoio.invalido') : t('apoio.livre');
+    };
+    if (!fixos.includes(valorApoio)) {
+      corpo.append(el('input', { inputmode: 'decimal', placeholder: t('apoio.valorPh'), value: valorApoio, 'aria-label': t('apoio.outro'), 'data-foco': 'valor', on: { input: (e) => { valorApoio = e.target.value; atualizarPix(); } } }));
     }
-    const v = valorPix(valorApoio);
-    const codigo = brCode(v === v ? valorApoio : '');
-    const q = qrcode(0, 'M'); q.addData(codigo); q.make();
-    corpo.append(el('img', { class: 'apoio-qr', src: q.createDataURL(6, 4), alt: 'QR Code Pix', width: 210, height: 210 }));
-    if (v === null || v !== v) corpo.append(el('p', { class: 'apoio-nota' }, t('apoio.livre')));
-    const copiar = el('button', { type: 'button', class: 'botao principal', on: { click: async () => { try { await navigator.clipboard.writeText(codigo); copiar.textContent = t('apoio.copiado'); } catch {} } } }, t('apoio.copiar'));
-    corpo.append(copiar, el('p', { class: 'apoio-chave' }, `${t('apoio.chave')}: ${APOIO.chave}`));
-    corpo.append(el('button', { type: 'button', class: 'apoio-voltar', on: { click: () => { passoApoio = null; desenharApoio(); } } }, t('apoio.voltar')));
+    atualizarPix();
+    corpo.append(qr, notaValor);
+    const avisoCopiar = el('p', { class: 'so-leitor', role: 'status' });
+    const copiar = el('button', { type: 'button', class: 'botao principal', 'data-foco': 'copiar', on: { click: async () => {
+      try {
+        await navigator.clipboard.writeText(codigo);
+        copiar.dataset.estado = 'ok'; copiar.textContent = t('apoio.copiado');
+        avisoCopiar.className = 'so-leitor'; avisoCopiar.textContent = t('apoio.copiado');
+      } catch {
+        copiar.dataset.estado = 'erro';
+        avisoCopiar.className = 'apoio-erro'; avisoCopiar.textContent = t('apoio.copiarErro');
+      }
+    } } }, t('apoio.copiar'));
+    corpo.append(copiar, avisoCopiar, el('p', { class: 'apoio-chave' }, `${t('apoio.chave')}: ${APOIO.chave}`));
+    corpo.append(el('button', { type: 'button', class: 'apoio-voltar', 'data-foco': 'voltar', on: { click: irPara(null) } }, t('apoio.voltar')));
   } else {
-    corpo.append(el('a', { class: 'botao principal', href: APOIO.sponsors, target: '_blank', rel: 'noopener' }, t('apoio.sponsors')));
-    corpo.append(el('button', { type: 'button', class: 'apoio-voltar', on: { click: () => { passoApoio = null; desenharApoio(); } } }, t('apoio.voltar')));
+    corpo.append(el('a', { class: 'botao principal', href: APOIO.sponsors, target: '_blank', rel: 'noopener', 'data-foco': 'sponsors' }, t('apoio.sponsors')));
+    corpo.append(el('button', { type: 'button', class: 'apoio-voltar', 'data-foco': 'voltar', on: { click: irPara(null) } }, t('apoio.voltar')));
   }
   corpo.append(el('p', { class: 'apoio-nota' }, t('apoio.nota')));
   dlg.replaceChildren(corpo);
+  if (focoAntes) dlg.querySelector(`[data-foco="${focoAntes}"]`)?.focus();
 }
 $('.js-apoiar').addEventListener('click', () => { passoApoio = null; desenharApoio(); dlg.showModal(); });
 dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
@@ -143,6 +168,13 @@ function aoRolar() {
 }
 const vistas = new IntersectionObserver((itens) => { for (const it of itens) if (it.isIntersecting) it.target.classList.add('vista'); }, { threshold: [0.3], rootMargin: '0px 0px -20% 0px' });
 for (const b of $$('.batida')) vistas.observe(b);
+// um destaque por tela: o botão do topo só aparece quando nenhum dos outros dois está à vista
+const ctasAVista = new Set();
+const olharCtas = new IntersectionObserver((itens) => {
+  for (const it of itens) if (it.isIntersecting) ctasAVista.add(it.target); else ctasAVista.delete(it.target);
+  document.body.classList.toggle('cta-a-vista', ctasAVista.size > 0);
+});
+olharCtas.observe($('.heroi .js-baixar')); olharCtas.observe($('.final .js-baixar'));
 
 async function ligarCena() {
   const { criarCena, suportaWebGL } = await import('./cena.js');

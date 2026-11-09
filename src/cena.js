@@ -456,6 +456,16 @@ export function criarCena(canvas, { reduzido = false, leve = false, imagemTela =
   let progresso = 0; let suave = 0; let primeiro = true;
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
 
+  const vista = { w: 1, h: 1, x: 0, y: 0, ultimoX: -1, ultimoY: -1 };
+  // extra (0 a 1): no corredor das telas ao vivo o quadro anda um pouco mais, para as telas não ficarem atrás do texto
+  function enquadrar(extra) {
+    const dx = vista.x > 0 ? vista.x + extra * 0.13 : 0;
+    const dy = vista.y * (1 - extra); // no celular o corredor volta ao centro para as telas aparecerem
+    if (dx === vista.ultimoX && dy === vista.ultimoY) return;
+    vista.ultimoX = dx; vista.ultimoY = dy;
+    if (dx > 0 || dy > 0) camera.setViewOffset(vista.w, vista.h, -vista.w * dx, vista.h * dy, vista.w, vista.h); else camera.clearViewOffset();
+  }
+
   function tamanho() {
     const w = canvas.clientWidth || innerWidth; const h = canvas.clientHeight || innerHeight;
     renderer.setSize(w, h, false);
@@ -463,6 +473,12 @@ export function criarCena(canvas, { reduzido = false, leve = false, imagemTela =
     bloom.resolution.set(w / 2, h / 2);
     camera.aspect = w / h;
     camera.fov = w / h < 0.8 ? 68 : 52;
+    // composição: em tela larga o quadro vai para a direita da coluna de texto; no celular a fogueira sobe para acima do texto
+    vista.w = w; vista.h = h;
+    vista.x = THREE.MathUtils.clamp((w / h - 1.1) / 0.5, 0, 1) * 0.11;
+    vista.y = w / h < 0.8 ? 0.14 : 0;
+    vista.ultimoX = -1;
+    enquadrar(0);
     camera.updateProjectionMatrix();
     const l = w / h > 1.1;
     if (l !== largo) { largo = l; curvas = caminhos(largo); }
@@ -505,6 +521,7 @@ export function criarCena(canvas, { reduzido = false, leve = false, imagemTela =
     }
     // as telas ao vivo acendem quando a câmera chega no corredor e somem depois que ela passa
     const acende = THREE.MathUtils.smoothstep(suave, 0.56, 0.68) * (1 - THREE.MathUtils.smoothstep(suave, 0.88, 0.96));
+    enquadrar(acende);
     for (const g of telasVivo) {
       g.visible = acende > 0.01;
       g.position.y = g.userData.y + Math.sin(tempo * 0.8 + g.userData.fase) * 0.08 - (1 - acende) * 0.6;
@@ -533,7 +550,7 @@ export function criarCena(canvas, { reduzido = false, leve = false, imagemTela =
   }
 
   return {
-    definirProgresso(p) { progresso = Math.min(1, Math.max(0, p)); if (reduzido) desenhar(); },
+    definirProgresso(p) { progresso = Math.min(1, Math.max(0, p)); },
     ligar() { if (rodando || reduzido) { desenhar(); return; } rodando = true; relogio.update(performance.now()); pedido = requestAnimationFrame(laco); },
     desligar() { rodando = false; cancelAnimationFrame(pedido); },
     desenhar,

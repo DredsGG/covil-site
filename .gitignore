@@ -5,3 +5,4 @@ dist
 ferramentas/prints.mjs
 ferramentas/avatar-*.png
 .wrangler
+ferramentas/capturas-fase2

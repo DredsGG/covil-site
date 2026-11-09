@@ -15,7 +15,7 @@
   <meta property="og:image" content="https://covil.app/og.png" />
   <meta name="twitter:card" content="summary_large_image" />
 </head>
-<body>
+<body class="cta-a-vista">
   <a class="pular" href="#conteudo" data-t="nav.pular">Pular para o conteúdo</a>
   <canvas id="cena" aria-hidden="true"></canvas>
   <div class="veu" aria-hidden="true"></div>
@@ -26,12 +26,13 @@
     </a>
     <nav class="nav">
       <a href="#conta" data-t="nav.convite">Como entrar</a>
-      <a class="nav-baixar" href="#baixar" data-t="nav.baixar">Baixar</a>
+      <a class="botao principal nav-baixar js-baixar" href="https://github.com/DredsGG/covil/releases/latest" data-t="heroi.baixar">Baixar para Windows</a>
     </nav>
   </header>
 
   <main id="conteudo">
     <section class="heroi" aria-labelledby="titulo">
+      <div class="texto-na-cena">
       <h1 id="titulo" class="palavra">Covil</h1>
       <p class="heroi-sub" data-t="heroi.sub">Chat, call e tela ao vivo para a sua turma. Num servidor que é de vocês, sem anúncio e sem vender o que vocês conversam.</p>
       <div class="acoes">
@@ -39,28 +40,37 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" /></svg>
           <span data-t="heroi.baixar">Baixar para Windows</span>
         </a>
-        <a class="botao" href="#conta" data-t="heroi.convite">Como entrar</a>
       </div>
       <p class="baixar-info js-baixar-info" aria-live="polite"></p>
+      <p class="outro-sistema js-outro-heroi" hidden></p>
+      </div>
       <p class="rolar" aria-hidden="true"><span data-t="heroi.rolar">Role para entrar</span></p>
     </section>
 
     <div class="historia">
       <section class="batida" data-batida="1">
+        <div class="texto-na-cena">
         <h2 data-t="h1.titulo">Entra, a fogueira tá acesa.</h2>
         <p data-t="h1.texto">O Covil é fechado: só entra quem recebe convite de alguém da turma. Lá dentro é tudo de vocês.</p>
+        </div>
       </section>
       <section class="batida" data-batida="2">
+        <div class="texto-na-cena">
         <h2 data-t="h2.titulo">Voz limpa, mesmo com obra do lado.</h2>
         <p data-t="h2.texto">A supressão de ruído com IA tira teclado, ventilador, furadeira e martelo do que vai para a call. Sua voz passa, o barulho fica.</p>
+        </div>
       </section>
       <section class="batida" data-batida="3">
+        <div class="texto-na-cena">
         <h2 data-t="h3.titulo">Até 4 telas ao vivo ao mesmo tempo.</h2>
         <p data-t="h3.texto">Transmita o jogo a 60 quadros por segundo, em 1080p, 1440p ou na resolução da sua tela, com o som junto. Quem assiste escolhe qual fica grande.</p>
+        </div>
       </section>
       <section class="batida ultima" data-batida="4">
+        <div class="texto-na-cena">
         <h2 data-t="h4.titulo">Tudo num app só.</h2>
         <p data-t="h4.texto">Servidores com canais de texto e de voz, cargos, mensagens diretas, amigos, soundboard e câmera. Do jeito que a turma já conhece.</p>
+        </div>
       </section>
     </div>
 
@@ -73,7 +83,7 @@
         <figure class="print"><img src="./img/chat.webp" width="1600" height="1286" loading="lazy" decoding="async" data-t-alt="chat.alt" alt="Canal de texto do Covil com a turma combinando uma partida" /></figure>
       </section>
 
-      <section class="linha invertida" id="jeito">
+      <section class="linha" id="jeito">
         <div class="linha-texto">
           <h2 data-t="jeito.titulo">Do jeito da turma</h2>
           <p data-t="jeito.texto">Placa de nome, moldura na foto, capa no cartão de perfil, tag do servidor, 13 temas e a cor de destaque que você quiser. Cada um aparece do seu jeito.</p>
@@ -92,21 +102,20 @@
           <p class="nota" data-t="conta.semConvite">Sem convite? Peça para alguém da turma: no Covil, menu do servidor, Convidar amigos.</p>
         </div>
         <ol class="passos">
-          <li><a href="#baixar" data-t="conta.passo1">Baixe o app para Windows.</a></li>
+          <li><span data-t="conta.passo1">Baixe o app para Windows.</span></li>
           <li><span data-t="conta.passo2">Abra e cole o convite que te mandaram (tela “Entrar no Covil de um amigo”).</span></li>
           <li><span data-t="conta.passo3">Crie seu usuário e senha.</span></li>
         </ol>
       </section>
 
       <section class="final" id="baixar" aria-labelledby="final-titulo">
-        <img class="final-logo" src="./icone.svg" alt="" width="88" height="88" />
         <h2 id="final-titulo" data-t="final.titulo">Chama a turma.</h2>
         <p data-t="final.texto">Baixe o Covil, crie a conta com o convite e entre na Sala.</p>
         <a class="botao principal grande js-baixar" href="https://github.com/DredsGG/covil/releases/latest">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" /></svg>
           <span data-t="heroi.baixar">Baixar para Windows</span>
         </a>
-        <p class="baixar-info js-baixar-info" aria-live="polite"></p>
+        <p class="baixar-info js-baixar-info"></p>
         <p class="outro-sistema js-outro-sistema" hidden></p>
       </section>
     </div>
@@ -122,7 +131,7 @@
       <a href="mailto:contato@covil.app" data-t="rodape.contato">Contato</a>
       <a class="js-bug" href="https://github.com/DredsGG/covil/issues/new" target="_blank" rel="noopener" data-t="rodape.bug">Relatar bug</a>
       <a href="https://github.com/DredsGG/covil" target="_blank" rel="noopener" data-t="rodape.codigo">Código no GitHub</a>
-      <button type="button" class="js-apoiar"><span data-t="rodape.apoiar">Apoiar</span> <span aria-hidden="true">♥</span></button>
+      <button type="button" class="js-apoiar"><span data-t="rodape.apoiar">Apoiar</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14 2.2 8.1a3.4 3.4 0 0 1 4.8-4.8l1 1 1-1a3.4 3.4 0 0 1 4.8 4.8z"/></svg></button>
     </div>
     <div class="idiomas" role="group" data-t-label="rodape.idioma" aria-label="Idioma">
       <button type="button" data-idioma="pt" lang="pt">PT</button>
